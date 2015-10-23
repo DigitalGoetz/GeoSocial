@@ -38,6 +38,10 @@ public class StreamService extends BasicService {
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
+		
+		//Start twitter stream capture and schedule scrubbers
+		
+		
 		StreamService service = new StreamService();
 		HttpServer server = service.buildServer();
 
