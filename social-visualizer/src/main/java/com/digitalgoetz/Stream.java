@@ -51,10 +51,13 @@ public class Stream {
 
 		@Override
 		public void onStatus(Status status) {
+			System.out.println("Tweet Encountered (" + tweets.size() + " found)");
 			if (queryString != null) {
 				if (status.getText().contains(queryString)) {
 					tweets.add(new Tweet(status));
 				}
+			} else {
+				tweets.add(new Tweet(status));
 			}
 		}
 

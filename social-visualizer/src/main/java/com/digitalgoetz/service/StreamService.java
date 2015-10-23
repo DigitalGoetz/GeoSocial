@@ -1,5 +1,10 @@
 package com.digitalgoetz.service;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -10,6 +15,9 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyUtil;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import com.altamira.irad.aede.services.BasicService;
+import com.digitalgoetz.StreamCleaner;
+import com.digitalgoetz.StreamRunner;
+import com.digitalgoetz.concurrent.ConcurrentTweetList;
 
 public class StreamService extends BasicService {
 
@@ -38,10 +46,19 @@ public class StreamService extends BasicService {
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-		
-		//Start twitter stream capture and schedule scrubbers
-		
-		
+
+		ConcurrentTweetList tweets = ConcurrentTweetList.getInstance();
+
+		StreamRunner captureThread = new StreamRunner(null, tweets);
+		StreamCleaner scrubThread = new StreamCleaner(tweets);
+
+		// Start twitter stream capture and schedule scrubbers
+		ExecutorService streamCapture = Executors.newSingleThreadExecutor();
+		streamCapture.submit(captureThread);
+
+		ScheduledExecutorService scrubber = Executors.newSingleThreadScheduledExecutor();
+		scrubber.schedule(scrubThread, 30, TimeUnit.SECONDS);
+
 		StreamService service = new StreamService();
 		HttpServer server = service.buildServer();
 

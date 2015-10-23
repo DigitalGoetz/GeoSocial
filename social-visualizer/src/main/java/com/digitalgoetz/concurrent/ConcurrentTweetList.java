@@ -22,6 +22,10 @@ public class ConcurrentTweetList {
 		list = new ArrayList<Tweet>();
 	}
 
+	public synchronized int size() {
+		return list.size();
+	}
+
 	public synchronized void add(Tweet element) {
 		list.add(element);
 	}
@@ -30,8 +34,7 @@ public class ConcurrentTweetList {
 		list.remove(index);
 	}
 
-	public synchronized void clearList(Date now, long windowInMinutes) {
-		long window = windowInMinutes * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
+	public synchronized void clearList(Date now, long windowInMilliseconds) {
 
 		long currentTime = now.getTime();
 		List<Tweet> newList = new ArrayList<>();
@@ -39,7 +42,7 @@ public class ConcurrentTweetList {
 		for (Tweet message : list) {
 			long messageTime = message.getDate().getTime();
 
-			if ((currentTime - messageTime) <= window) {
+			if ((currentTime - messageTime) <= windowInMilliseconds) {
 				newList.add(message);
 			}
 
@@ -56,7 +59,4 @@ public class ConcurrentTweetList {
 		}
 		return output;
 	}
-
-	private final int SECONDS_PER_MINUTE = 60;
-	private final int MILLISECONDS_PER_SECOND = 1000;
 }

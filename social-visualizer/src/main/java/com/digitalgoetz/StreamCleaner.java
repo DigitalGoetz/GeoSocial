@@ -14,7 +14,7 @@ public class StreamCleaner implements Runnable {
 
 	@Override
 	public void run() {
-		tweets.clearList(new Date(), 1);
+		tweets.clearList(new Date(), 30 * 1000);
 	}
 
 }
