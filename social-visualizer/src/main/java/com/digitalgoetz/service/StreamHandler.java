@@ -19,7 +19,7 @@ public class StreamHandler {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getTest() {
 		log.debug("GET: test");
-		return "test success";
+		return "test success: " + tweets.size();
 	}
 
 }

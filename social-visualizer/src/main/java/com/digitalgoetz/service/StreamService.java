@@ -36,7 +36,7 @@ public class StreamService extends BasicService {
 
 		ServerConfiguration config = httpServer.getServerConfiguration();
 		CLStaticHttpHandler fileContainer = new CLStaticHttpHandler(StreamService.class.getClassLoader());
-		config.addHttpHandler(fileContainer, "/web");
+		config.addHttpHandler(fileContainer, "/");
 
 		final ResourceConfig rc = new ResourceConfig().packages("com.digitalgoetz");
 		GrizzlyHttpContainer restContainer = GrizzlyUtil.getContainer(rc);
@@ -57,7 +57,7 @@ public class StreamService extends BasicService {
 		streamCapture.submit(captureThread);
 
 		ScheduledExecutorService scrubber = Executors.newSingleThreadScheduledExecutor();
-		scrubber.schedule(scrubThread, 30, TimeUnit.SECONDS);
+		scrubber.scheduleWithFixedDelay(scrubThread, 5, 15, TimeUnit.SECONDS);
 
 		StreamService service = new StreamService();
 		HttpServer server = service.buildServer();

@@ -2,11 +2,14 @@ package com.digitalgoetz;
 
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import com.digitalgoetz.concurrent.ConcurrentTweetList;
 
 public class StreamCleaner implements Runnable {
 
 	ConcurrentTweetList tweets;
+	Logger log = Logger.getLogger(getClass());
 
 	public StreamCleaner(ConcurrentTweetList tweets) {
 		this.tweets = tweets;
@@ -14,7 +17,8 @@ public class StreamCleaner implements Runnable {
 
 	@Override
 	public void run() {
-		tweets.clearList(new Date(), 30 * 1000);
+		Date curr = new Date();
+		tweets.clearList(curr, 15 * 1000);
 	}
 
 }

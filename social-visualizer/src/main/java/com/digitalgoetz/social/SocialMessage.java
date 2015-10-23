@@ -20,6 +20,6 @@ public abstract class SocialMessage {
 
 	public abstract Network getNetwork();
 
-	public abstract Date getDate();
+	public abstract Date getDateObtained();
 
 }

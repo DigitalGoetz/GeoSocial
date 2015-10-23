@@ -1,5 +1,7 @@
 package com.digitalgoetz;
 
+import org.apache.log4j.Logger;
+
 import com.digitalgoetz.concurrent.ConcurrentTweetList;
 import com.digitalgoetz.social.Tweet;
 
@@ -12,6 +14,7 @@ import twitter4j.TwitterStreamFactory;
 
 public class Stream {
 
+	Logger log = Logger.getLogger(getClass());
 	private TwitterStream twitterStream;
 	ConcurrentTweetList tweets;
 
@@ -51,7 +54,7 @@ public class Stream {
 
 		@Override
 		public void onStatus(Status status) {
-			System.out.println("Tweet Encountered (" + tweets.size() + " found)");
+			log.debug("Tweet Encountered (" + tweets.size() + " found)");
 			if (queryString != null) {
 				if (status.getText().contains(queryString)) {
 					tweets.add(new Tweet(status));

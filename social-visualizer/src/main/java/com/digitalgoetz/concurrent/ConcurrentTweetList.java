@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.digitalgoetz.social.Tweet;
 
 public class ConcurrentTweetList {
+
+	private static Logger log = Logger.getLogger(ConcurrentTweetList.class);
 
 	List<Tweet> list;
 	private static ConcurrentTweetList instance = null;
@@ -35,20 +39,22 @@ public class ConcurrentTweetList {
 	}
 
 	public synchronized void clearList(Date now, long windowInMilliseconds) {
-
+		int startsize = list.size();
 		long currentTime = now.getTime();
+
 		List<Tweet> newList = new ArrayList<>();
 
 		for (Tweet message : list) {
-			long messageTime = message.getDate().getTime();
-
+			long messageTime = message.getDateObtained().getTime();
 			if ((currentTime - messageTime) <= windowInMilliseconds) {
 				newList.add(message);
 			}
-
 		}
 
 		list = newList;
+		int endsize = list.size();
+
+		log.debug("Removed " + (startsize - endsize) + " tweets");
 
 	}
 
