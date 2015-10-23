@@ -4,17 +4,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.digitalgoetz.social.SocialMessage;
+import com.digitalgoetz.social.Tweet;
 
-public class ConcurrentList<T extends SocialMessage> {
+public class ConcurrentTweetList {
 
-	List<T> list;
+	List<Tweet> list;
+	private static ConcurrentTweetList instance = null;
 
-	public ConcurrentList() {
-		list = new ArrayList<T>();
+	public static ConcurrentTweetList getInstance() {
+		if (instance == null) {
+			instance = new ConcurrentTweetList();
+		}
+		return instance;
 	}
 
-	public synchronized void add(T element) {
+	private ConcurrentTweetList() {
+		list = new ArrayList<Tweet>();
+	}
+
+	public synchronized void add(Tweet element) {
 		list.add(element);
 	}
 
@@ -26,9 +34,9 @@ public class ConcurrentList<T extends SocialMessage> {
 		long window = windowInMinutes * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
 
 		long currentTime = now.getTime();
-		List<T> newList = new ArrayList<T>();
+		List<Tweet> newList = new ArrayList<>();
 
-		for (T message : list) {
+		for (Tweet message : list) {
 			long messageTime = message.getDate().getTime();
 
 			if ((currentTime - messageTime) <= window) {
@@ -41,9 +49,9 @@ public class ConcurrentList<T extends SocialMessage> {
 
 	}
 
-	public synchronized List<T> getList() {
-		List<T> output = new ArrayList<>();
-		for (T message : list) {
+	public synchronized List<Tweet> getList() {
+		List<Tweet> output = new ArrayList<>();
+		for (Tweet message : list) {
 			output.add(message);
 		}
 		return output;

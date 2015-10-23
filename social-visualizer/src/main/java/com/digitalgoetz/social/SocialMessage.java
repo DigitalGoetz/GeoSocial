@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.digitalgoetz.Image;
 
-public class SocialMessage implements Message {
+public abstract class SocialMessage {
 
 	Network network;
 
@@ -14,18 +14,12 @@ public class SocialMessage implements Message {
 	List<Image> images;
 	Map<String, String> meta;
 
-	public SocialMessage(Network network) {
-		this.network = network;
-	}
-
 	public enum Network {
 		TWITTER, INSTAGRAM;
 	}
 
-	@Override
-	public Date getDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract Network getNetwork();
+
+	public abstract Date getDate();
 
 }

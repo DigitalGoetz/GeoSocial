@@ -1,9 +1,7 @@
 package com.digitalgoetz;
 
-
-import java.util.ArrayList;
-
-import java.util.List;
+import com.digitalgoetz.concurrent.ConcurrentTweetList;
+import com.digitalgoetz.social.Tweet;
 
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -13,12 +11,11 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 
 public class Stream {
-	List<Status> tweets;
 
 	private TwitterStream twitterStream;
+	ConcurrentTweetList tweets;
 
-	public Stream(String queryString) {
-		tweets = new ArrayList<>();
+	public Stream(String queryString, ConcurrentTweetList tweets) {
 		twitterStream = TwitterStreamFactory.getSingleton();
 		twitterStream.addListener(new StreamListener(queryString, tweets));
 	}
@@ -37,10 +34,10 @@ public class Stream {
 
 	private class StreamListener implements StatusListener {
 
-		List<Status> tweets;
+		ConcurrentTweetList tweets;
 		String queryString;
 
-		public StreamListener(String queryString, List<Status> tweets) {
+		public StreamListener(String queryString, ConcurrentTweetList tweets) {
 			this.tweets = tweets;
 			this.queryString = queryString;
 
@@ -56,7 +53,7 @@ public class Stream {
 		public void onStatus(Status status) {
 			if (queryString != null) {
 				if (status.getText().contains(queryString)) {
-					tweets.add(status);
+					tweets.add(new Tweet(status));
 				}
 			}
 		}
