@@ -5,25 +5,26 @@ import org.apache.commons.validator.routines.UrlValidator;
 public class UrlExtractor {
 
 	private final static String[] schemes = { "http", "https" };
-	private final static UrlValidator validator = new UrlValidator(schemes);
+	private final static UrlValidator validator = new UrlValidator(schemes, UrlValidator.ALLOW_LOCAL_URLS);
 
-	public boolean isValid(String url) {
-		if (url == null) {
-			return false;
-		}
-		return validator.isValid(url);
-	}
+	// public static void main(String[] args) {
+	// final UrlExtractor ue = new UrlExtractor();
+	//
+	// final String url1 = "http://something with tail";
+	// final String url2 = "something https://blah and stuff";
+	// final String url3 = "never mind the gap http://yarg";
+	//
+	// System.out.println(ue.extractUrl(url1));
+	// System.out.println(ue.extractUrl(url2));
+	// System.out.println(ue.extractUrl(url3));
+	// }
 
-	private String extractUrl(String text) {
-		String url;
+	public String extractUrl(String text) {
+		final int indexOf = text.indexOf("http");
+		String url = null;
 
-		int indexOf = text.indexOf("http");
-
-		if (indexOf < 0) {
-			url = null;
-		} else {
-
-			String httpStart = text.substring(indexOf);
+		if (indexOf >= 0) {
+			final String httpStart = text.substring(indexOf);
 
 			int whitespace;
 			boolean isInternal = false;
@@ -46,25 +47,19 @@ public class UrlExtractor {
 
 	}
 
-	public String validateUrl(String urlCandidate) {
+	private boolean isValid(String url) {
+		if (url == null) {
+			return false;
+		}
+		return validator.isValid(url);
+	}
+
+	private String validateUrl(String urlCandidate) {
 		if (isValid(urlCandidate)) {
 			return urlCandidate;
 		}
 		return null;
-	}
 
-	public static void main(String[] args) {
-		UrlExtractor ue = new UrlExtractor();
-
-		// http://commons.apache.org/proper/commons-validator/apidocs/org/apache/commons/validator/routines/UrlValidator.html
-
-		String url1 = "http://something with tail";
-		String url2 = "something https://blah and stuff";
-		String url3 = "never mind the gap http://yarg";
-
-		System.out.println(ue.extractUrl(url1));
-		System.out.println(ue.extractUrl(url2));
-		System.out.println(ue.extractUrl(url3));
 	}
 
 }

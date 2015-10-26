@@ -34,7 +34,7 @@
 # same ServerRoot for multiple httpd daemons, you will need to change at
 # least PidFile.
 #
-ServerRoot "C:\Development\httpd\Apache24"
+ServerRoot "C:\Users\michael.goetz\dev\httpd\Apache24"
 
 #
 # Mutex: Allows you to set the mutex mechanism and mutex file directory
@@ -219,6 +219,7 @@ ServerAdmin admin@example.com
 #ServerName www.example.com:80
 ServerName localhost:80
 
+
 #
 # Deny access to the entirety of your server's filesystem. You must
 # explicitly permit access to web content directories in other 
@@ -241,8 +242,8 @@ ServerName localhost:80
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "C:\Development\httpd\Apache24\htdocs"
-<Directory "C:\Development\httpd\Apache24\htdocs">
+DocumentRoot "C:\Users\michael.goetz\dev\httpd\Apache24\htdocs"
+<Directory "C:\Users\michael.goetz\dev\httpd\Apache24\htdocs">
     #
     # Possible values for the Options directive are "None", "All",
     # or any combination of:
@@ -530,14 +531,15 @@ SSLRandomSeed connect builtin
 #RequestHeader unset DNT env=bad_DNT
 #</IfModule>
 
-#ProxyRequests On
-ProxyPreserveHost On
+ProxyRequests On
+#ProxyPreserveHost On
 
-#make sure that all the paths listed below are set for the proxy
-AllowEncodedSlashes NoDecode
+ProxyPass /web3rest http://localhost:4222/rest
+ProxyPassReverse /web3rest http://localhost:4222/rest
 
-ProxyPass /web3 http://localhost:4222 nocanon
-ProxyPassReverse /web3 http://localhost:4222
+ProxyPass /web3 http://localhost:4222/web 
+ProxyPassReverse /web3 http://localhost:4222/web
 
-ProxyPass /geoproxy http://localhost:7080 nocanon
-ProxyPassReverse /geoproxy http://localhost:7080
+ProxyPass /map http://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/
+ProxyPassReverse /map http://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/
+

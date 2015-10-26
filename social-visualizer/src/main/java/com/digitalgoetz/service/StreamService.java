@@ -26,7 +26,7 @@ public class StreamService extends BasicService {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
-		final boolean runServerWithStream = false;
+		final boolean runServerWithStream = true;
 
 		final ConcurrentTweetList tweets = ConcurrentTweetList.getInstance();
 
@@ -39,7 +39,7 @@ public class StreamService extends BasicService {
 
 		if (runServerWithStream) {
 			streamCapture.submit(captureThread);
-			scrubber.scheduleWithFixedDelay(scrubThread, 5, 15, TimeUnit.SECONDS);
+			scrubber.scheduleWithFixedDelay(scrubThread, 5, 60, TimeUnit.SECONDS);
 		}
 
 		final StreamService service = new StreamService();
@@ -69,7 +69,7 @@ public class StreamService extends BasicService {
 
 		final ServerConfiguration config = httpServer.getServerConfiguration();
 		final CLStaticHttpHandler fileContainer = new CLStaticHttpHandler(StreamService.class.getClassLoader());
-		config.addHttpHandler(fileContainer, "/");
+		config.addHttpHandler(fileContainer, "/web");
 
 		final ResourceConfig rc = new ResourceConfig().packages("com.digitalgoetz");
 		final GrizzlyHttpContainer restContainer = GrizzlyUtil.getContainer(rc);
