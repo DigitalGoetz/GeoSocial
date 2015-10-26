@@ -19,11 +19,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.altamira.irad.aede</groupId>
-			<artifactId>AedeCommons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-grizzly2-http</artifactId>
 		</dependency>
