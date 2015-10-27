@@ -1,6 +1,5 @@
 package com.digitalgoetz.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -12,10 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.digitalgoetz.concurrent.ConcurrentTweetList;
-import com.digitalgoetz.extractors.ImageExtractor;
-import com.digitalgoetz.extractors.UrlExtractor;
 import com.digitalgoetz.social.Tweet;
-import com.google.gson.Gson;
 
 @Path("api")
 public class StreamHandler {
@@ -23,8 +19,6 @@ public class StreamHandler {
 	Logger log = Logger.getLogger(getClass());
 
 	ConcurrentTweetList tweets = ConcurrentTweetList.getInstance();
-	UrlExtractor urlExtractor = new UrlExtractor();
-	ImageExtractor imageExtractor = new ImageExtractor();
 
 	@Path("test")
 	@GET
@@ -40,37 +34,32 @@ public class StreamHandler {
 	public Response getTweets() {
 		log.debug("GET: tweets");
 
-		final List<Tweet> rawList = tweets.getList();
-		final List<Tweet> filteredList = new ArrayList<>();
+		final List<Tweet> list = tweets.getList();
 
-		for (final Tweet tweet : rawList) {
-			boolean urlFlag = false;
-			boolean geoFlag = false;
+		log.debug("Found: " + list.size() + " tweets with geo + images");
 
-			final String url = urlExtractor.extractUrl(tweet.getText());
-			if (url != null) {
-				urlFlag = true;
-				tweet.setUrl(url);
+		final String json = listToJson(list);
+		log.debug("returning: " + json);
+		return Response.ok(json).type(MediaType.APPLICATION_JSON_TYPE).build();
+	}
 
-				if (imageExtractor.urlContainsImage(url)) {
-					tweet.setUrlIsImage(true);
-				}
+	private String listToJson(List<Tweet> list) {
+
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append("{ 'tweets' : [");
+
+		for (int i = 0; i < list.size(); i++) {
+			sb.append(list.get(i).toString());
+			if (i != (list.size() - 1)) {
+				sb.append(",");
 			}
 
-			if (tweet.isLocationDefined()) {
-				geoFlag = true;
-			}
-
-			if (urlFlag && geoFlag) {
-				filteredList.add(tweet);
-			}
 		}
 
-		log.debug("Found: " + filteredList.size() + " tweets with geo + images");
+		sb.append("] }");
 
-		final Gson gson = new Gson();
-		gson.toJson(filteredList);
-		return Response.ok(gson.toJson(filteredList)).type(MediaType.APPLICATION_JSON_TYPE).build();
+		return sb.toString();
 	}
 
 }

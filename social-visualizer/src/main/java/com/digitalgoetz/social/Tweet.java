@@ -1,10 +1,19 @@
 package com.digitalgoetz.social;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.log4j.Logger;
+
+import com.digitalgoetz.extractors.Extractor;
+import com.digitalgoetz.extractors.ExtractorComparator;
 
 import twitter4j.Status;
 
@@ -12,32 +21,34 @@ import twitter4j.Status;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Tweet extends SocialMessage {
 
+	Logger log = Logger.getLogger(getClass());
+
 	String id;
 	Date obtained;
-	boolean urlIsImage = false;
 
-	public boolean isUrlIsImage() {
-		return urlIsImage;
-	}
+	public Tweet(Status source, Extractor... extractors) {
+		final List<Extractor> extractorList = new ArrayList<>();
+		for (final Extractor extractor : extractors) {
+			extractorList.add(extractor);
+		}
 
-	public void setUrlIsImage(boolean urlIsImage) {
-		this.urlIsImage = urlIsImage;
-	}
+		id = Long.toString(source.getId());
+		obtained = new Date();
+		meta = new HashMap<>();
 
-	String url = null;
-	String text = null;
-	boolean locationDefined = false;
-	double latitude;
-	double longitude;
+		meta.put("text", source.getText());
 
-	public Tweet(Status source) {
-		this.obtained = new Date();
-		this.text = source.getText();
-		this.id = Long.toString(source.getId());
 		if (source.getGeoLocation() != null) {
-			locationDefined = true;
-			latitude = source.getGeoLocation().getLatitude();
-			longitude = source.getGeoLocation().getLongitude();
+			meta.put("latitude", Double.toString(source.getGeoLocation().getLatitude()));
+			meta.put("longitude", Double.toString(source.getGeoLocation().getLongitude()));
+		}
+
+		Collections.sort(extractorList, new ExtractorComparator());
+
+		log.debug(id + " EXTRACTION PROCESS");
+		for (final Extractor extractor : extractorList) {
+			log.debug(id + ": Extracting via " + extractor.getName() + " with priority " + extractor.getPriority());
+			extractor.extract(source, meta);
 		}
 	}
 
@@ -50,56 +61,22 @@ public class Tweet extends SocialMessage {
 		return id;
 	}
 
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
 	@Override
 	public Network getNetwork() {
 		return Network.TWITTER;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public String getUrl() {
-		if (url == null) {
-			url = "";
-		}
-		return url;
-	}
-
-	public boolean isLocationDefined() {
-		return locationDefined;
 	}
 
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
+	@Override
+	public String toString() {
+		String str = "";
 
-	public void setLocationDefined(boolean locationDefined) {
-		this.locationDefined = locationDefined;
-	}
+		str += "{ 'id' : '" + id + "' }";
 
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
+		return str;
 	}
 
 }

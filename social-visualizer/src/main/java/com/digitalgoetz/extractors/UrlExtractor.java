@@ -1,25 +1,30 @@
 package com.digitalgoetz.extractors;
 
-import org.apache.commons.validator.routines.UrlValidator;
+import java.util.Map;
 
-public class UrlExtractor {
+import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.log4j.Logger;
+
+import twitter4j.Status;
+
+public class UrlExtractor implements Extractor {
 
 	private final static String[] schemes = { "http", "https" };
 	private final static UrlValidator validator = new UrlValidator(schemes, UrlValidator.ALLOW_LOCAL_URLS);
 
-	// public static void main(String[] args) {
-	// final UrlExtractor ue = new UrlExtractor();
-	//
-	// final String url1 = "http://something with tail";
-	// final String url2 = "something https://blah and stuff";
-	// final String url3 = "never mind the gap http://yarg";
-	//
-	// System.out.println(ue.extractUrl(url1));
-	// System.out.println(ue.extractUrl(url2));
-	// System.out.println(ue.extractUrl(url3));
-	// }
+	Logger log = Logger.getLogger(getClass());
 
-	public String extractUrl(String text) {
+	@Override
+	public void extract(Status status, Map<String, String> meta) {
+
+		final String extractUrl = extractUrl(status.getText());
+		if (extractUrl != null) {
+			meta.put("url", extractUrl);
+		}
+
+	}
+
+	private String extractUrl(String text) {
 		final int indexOf = text.indexOf("http");
 		String url = null;
 
@@ -43,15 +48,27 @@ public class UrlExtractor {
 			}
 		}
 
-		return validateUrl(url);
+		final String extractedUrl = validateUrl(url);
+		log.debug("URL: " + extractedUrl);
+		return extractedUrl;
 
+	}
+
+	@Override
+	public String getName() {
+		return getClass().getName();
+	}
+
+	@Override
+	public Priority getPriority() {
+		return Priority.INDEPENDENT;
 	}
 
 	private boolean isValid(String url) {
 		if (url == null) {
 			return false;
 		}
-		
+
 		return validator.isValid(url);
 	}
 

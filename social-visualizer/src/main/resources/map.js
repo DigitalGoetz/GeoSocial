@@ -35,6 +35,8 @@ function getTweets() {
 
 function updateTweetList(newTweets) {
 
+	return;
+
 	for (id in tweetList) {
 		console.log("removing ")
 		map.removeLayer(tweetList[id]);
