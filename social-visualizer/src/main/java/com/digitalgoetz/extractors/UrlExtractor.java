@@ -51,6 +51,7 @@ public class UrlExtractor {
 		if (url == null) {
 			return false;
 		}
+		
 		return validator.isValid(url);
 	}
 

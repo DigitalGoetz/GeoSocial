@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.digitalgoetz.concurrent.ConcurrentTweetList;
+import com.digitalgoetz.extractors.ImageExtractor;
 import com.digitalgoetz.extractors.UrlExtractor;
 import com.digitalgoetz.social.Tweet;
 import com.google.gson.Gson;
@@ -23,6 +24,7 @@ public class StreamHandler {
 
 	ConcurrentTweetList tweets = ConcurrentTweetList.getInstance();
 	UrlExtractor urlExtractor = new UrlExtractor();
+	ImageExtractor imageExtractor = new ImageExtractor();
 
 	@Path("test")
 	@GET
@@ -36,7 +38,7 @@ public class StreamHandler {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTweets() {
-		log.debug("GET: test");
+		log.debug("GET: tweets");
 
 		final List<Tweet> rawList = tweets.getList();
 		final List<Tweet> filteredList = new ArrayList<>();
@@ -49,6 +51,10 @@ public class StreamHandler {
 			if (url != null) {
 				urlFlag = true;
 				tweet.setUrl(url);
+
+				if (imageExtractor.urlContainsImage(url)) {
+					tweet.setUrlIsImage(true);
+				}
 			}
 
 			if (tweet.isLocationDefined()) {

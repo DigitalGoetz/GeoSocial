@@ -14,6 +14,16 @@ public class Tweet extends SocialMessage {
 
 	String id;
 	Date obtained;
+	boolean urlIsImage = false;
+
+	public boolean isUrlIsImage() {
+		return urlIsImage;
+	}
+
+	public void setUrlIsImage(boolean urlIsImage) {
+		this.urlIsImage = urlIsImage;
+	}
+
 	String url = null;
 	String text = null;
 	boolean locationDefined = false;

@@ -14,7 +14,7 @@ $(function() {
 	});
 	nationalMap.addTo(map);
 
-	setInterval(getTweets, 3000);
+	setInterval(getTweets, 5000);
 
 });
 
@@ -33,21 +33,23 @@ function getTweets() {
 	});
 }
 
+function updateTweetList(newTweets) {
 
-function updateTweetList(newTweets){
-	
-	for( id in tweetList){
+	for (id in tweetList) {
 		console.log("removing ")
 		map.removeLayer(tweetList[id]);
 	}
-	
-	for(var i = 0; i < newTweets.length; i++){
+
+	for (var i = 0; i < newTweets.length; i++) {
 		var tweet = newTweets[i];
-		var marker = L.marker([tweet.latitude,tweet.longitude]);
+		var marker = L.marker([ tweet.latitude, tweet.longitude ]);
+
+		// http://leafletjs.com/examples/custom-icons.html
+		// setIcon for marker with url if url contains an image object
+		// Scaling?
+
 		map.addLayer(marker);
 		tweetList[tweet.id] = marker;
 	}
-	
-
 
 }
