@@ -1,4 +1,4 @@
-package com.digitalgoetz.concurrent;
+package com.digitalgoetz.twitter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,23 +6,21 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.digitalgoetz.social.Tweet;
+public class TweetCollection {
 
-public class ConcurrentTweetList {
-
-	private static Logger log = Logger.getLogger(ConcurrentTweetList.class);
+	private static Logger log = Logger.getLogger(TweetCollection.class);
 
 	List<Tweet> list;
-	private static ConcurrentTweetList instance = null;
+	private static TweetCollection instance = null;
 
-	public static ConcurrentTweetList getInstance() {
+	public static TweetCollection getInstance() {
 		if (instance == null) {
-			instance = new ConcurrentTweetList();
+			instance = new TweetCollection();
 		}
 		return instance;
 	}
 
-	private ConcurrentTweetList() {
+	private TweetCollection() {
 		list = new ArrayList<Tweet>();
 	}
 

@@ -7,7 +7,7 @@ import twitter4j.Status;
 public interface Extractor {
 
 	public enum Priority {
-		INDEPENDENT(1), FIRST_LEVEL_DEPENDENCY(2), SECOND_LEVEL_DEPENDENCY(3);
+		INDEPENDENT(3), FIRST_LEVEL_DEPENDENCY(2), SECOND_LEVEL_DEPENDENCY(1);
 
 		int rankValue;
 

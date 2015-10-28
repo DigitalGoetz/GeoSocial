@@ -1,4 +1,4 @@
-package com.digitalgoetz.social;
+package com.digitalgoetz.twitter;
 
 import java.util.ArrayList;
 import java.util.List;
