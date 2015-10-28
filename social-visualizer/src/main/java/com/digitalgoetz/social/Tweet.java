@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,12 +20,13 @@ import twitter4j.Status;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Tweet extends SocialMessage {
+public class Tweet {
 
 	Logger log = Logger.getLogger(getClass());
 
 	String id;
 	Date obtained;
+	Map<String, String> meta;
 
 	public Tweet(Status source, Extractor... extractors) {
 		final List<Extractor> extractorList = new ArrayList<>();
@@ -52,7 +54,6 @@ public class Tweet extends SocialMessage {
 		}
 	}
 
-	@Override
 	public Date getDateObtained() {
 		return obtained;
 	}
@@ -61,22 +62,7 @@ public class Tweet extends SocialMessage {
 		return id;
 	}
 
-	@Override
-	public Network getNetwork() {
-		return Network.TWITTER;
-	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	@Override
-	public String toString() {
-		String str = "";
-
-		str += "{ 'id' : '" + id + "' }";
-
-		return str;
-	}
-
 }

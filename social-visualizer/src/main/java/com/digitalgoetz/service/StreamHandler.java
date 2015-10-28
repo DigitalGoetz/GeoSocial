@@ -11,7 +11,9 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import com.digitalgoetz.concurrent.ConcurrentTweetList;
+import com.digitalgoetz.social.MockTweet;
 import com.digitalgoetz.social.Tweet;
+import com.digitalgoetz.social.TweetList;
 
 @Path("api")
 public class StreamHandler {
@@ -38,28 +40,8 @@ public class StreamHandler {
 
 		log.debug("Found: " + list.size() + " tweets with geo + images");
 
-		final String json = listToJson(list);
-		log.debug("returning: " + json);
-		return Response.ok(json).type(MediaType.APPLICATION_JSON_TYPE).build();
+		MockTweet dummy = new MockTweet();
+		dummy.setSample("glaven!");
+		return Response.ok(dummy).type(MediaType.APPLICATION_JSON_TYPE).build();
 	}
-
-	private String listToJson(List<Tweet> list) {
-
-		final StringBuilder sb = new StringBuilder();
-
-		sb.append("{ 'tweets' : [");
-
-		for (int i = 0; i < list.size(); i++) {
-			sb.append(list.get(i).toString());
-			if (i != (list.size() - 1)) {
-				sb.append(",");
-			}
-
-		}
-
-		sb.append("] }");
-
-		return sb.toString();
-	}
-
 }
