@@ -5,7 +5,7 @@ var borderLayer = null;
 var tweetList = new Object();
 
 $(function() {
-	map = new L.map('map').setView([ 0.0, 0.0 ], 6);
+	map = new L.map('map').setView([ 0.0, 0.0 ], 3);
 	var nationalMapUrl = "../map/{z}/{y}/{x}";
 	var nationalMapAttribution = "<a href='http:usgs.gov'>USGS</a> National Map Data";
 	var nationalMap = new L.TileLayer(nationalMapUrl, {
@@ -14,7 +14,7 @@ $(function() {
 	});
 	nationalMap.addTo(map);
 
-	setInterval(getTweets, 3000);
+	setInterval(getTweets, 10000);
 
 });
 
@@ -23,31 +23,54 @@ function getTweets() {
 		method : 'get',
 		url : '../web3rest/api/tweets',
 		success : function(data) {
-			console.log(data);
 			updateTweetList(data);
-		},
-		error : function(errorData) {
-			console.log("blarg " + errorData);
 		}
-
 	});
 }
 
-
-function updateTweetList(newTweets){
-	
-	for( id in tweetList){
-		console.log("removing ")
-		map.removeLayer(tweetList[id]);
+function idInList(key, list) {
+	for (var i = 0; i < list.length; i++) {
+		var id = list[i].id;
+		if (id == key) {
+			return true;
+		}
 	}
-	
-	for(var i = 0; i < newTweets.length; i++){
-		var tweet = newTweets[i];
-		var marker = L.marker([tweet.latitude,tweet.longitude]);
+	return false;
+}
+
+function idInObject(key, obj) {
+	for (id in obj) {
+		if (id == key) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function updateTweetList(data) {
+	// Remove stale Tweets
+	for (id in tweetList) {
+		if (!idInList(id, data.tweets)) {
+			map.removeLayer(tweetList[id]);
+		}
+	}
+
+	// Include new Tweets
+	for (var i = 0; i < data.tweets.length; i++) {
+
+		var tweet = data.tweets[i];
+
+		if (idInObject(tweet.id, tweetList)) {
+			continue;
+		}
+
+		var lat = tweet.meta.latitude;
+		var lon = tweet.meta.longitude;
+		var marker = L.marker([ lat, lon ]);
+		marker.bindPopup("" + tweet.meta.text);
+
 		map.addLayer(marker);
 		tweetList[tweet.id] = marker;
 	}
-	
-
 
 }

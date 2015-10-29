@@ -14,10 +14,8 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyUtil;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import com.digitalgoetz.StreamCleaner;
-import com.digitalgoetz.StreamRunner;
-import com.digitalgoetz.concurrent.ConcurrentTweetList;
 import com.digitalgoetz.service.commons.BasicService;
+import com.digitalgoetz.twitter.TweetCollection;
 
 public class StreamService extends BasicService {
 
@@ -28,10 +26,10 @@ public class StreamService extends BasicService {
 
 		final boolean runServerWithStream = true;
 
-		final ConcurrentTweetList tweets = ConcurrentTweetList.getInstance();
+		final TweetCollection tweets = TweetCollection.getInstance();
 
-		final StreamRunner captureThread = new StreamRunner(null, tweets);
-		final StreamCleaner scrubThread = new StreamCleaner(tweets);
+		final TwitterCollector captureThread = new TwitterCollector(null, tweets);
+		final TwitterCleaner scrubThread = new TwitterCleaner(tweets);
 
 		// Start twitter stream capture and schedule scrubbers
 		final ExecutorService streamCapture = Executors.newSingleThreadExecutor();
@@ -39,7 +37,7 @@ public class StreamService extends BasicService {
 
 		if (runServerWithStream) {
 			streamCapture.submit(captureThread);
-			scrubber.scheduleWithFixedDelay(scrubThread, 5, 60, TimeUnit.SECONDS);
+			scrubber.scheduleWithFixedDelay(scrubThread, 5, 5 * 60, TimeUnit.SECONDS);
 		}
 
 		final StreamService service = new StreamService();
