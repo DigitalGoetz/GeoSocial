@@ -5,7 +5,7 @@ var borderLayer = null;
 var tweetList = new Object();
 
 $(function() {
-	map = new L.map('map').setView([ 0.0, 0.0 ], 3);
+	map = new L.map('map').setView([ 0.0, 0.0 ], 2);
 	var nationalMapUrl = "../map/{z}/{y}/{x}";
 	var nationalMapAttribution = "<a href='http:usgs.gov'>USGS</a> National Map Data";
 	var nationalMap = new L.TileLayer(nationalMapUrl, {
@@ -67,7 +67,17 @@ function updateTweetList(data) {
 		var lat = tweet.meta.latitude;
 		var lon = tweet.meta.longitude;
 		var marker = L.marker([ lat, lon ]);
-		marker.bindPopup("" + tweet.meta.text);
+		
+		var content = tweet.meta.text + "<br />";
+		if (tweet.meta.images != undefined){
+			var split = tweet.meta.images.split(',');
+			for(var j = 0; j < split.length; j++){
+				var line =  "<a href='" + split[j] + "'>" + split[j] +"</a><br />";
+				content += line;
+			}
+		}
+		
+		marker.bindPopup(content);
 
 		map.addLayer(marker);
 		tweetList[tweet.id] = marker;
